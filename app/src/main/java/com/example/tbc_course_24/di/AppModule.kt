@@ -1,7 +1,7 @@
 package com.example.tbc_course_24.di
 
-import com.example.tbc_course_24.domain.repository.ApiRepository
-import com.example.tbc_course_24.network.ApiInterface
+import com.example.tbc_course_24.data.repository.CourseRepositoryImpl
+import com.example.tbc_course_24.data.services.ApiInterface
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -35,7 +35,4 @@ object AppModule {
     @Provides
     fun provideApi(retrofit: Retrofit): ApiInterface = retrofit.create(ApiInterface::class.java)
 
-    @Provides
-    @Singleton
-    fun provideMemeRepository(api: ApiInterface): ApiRepository = ApiRepository(api)
 }

@@ -1,6 +1,12 @@
-package com.example.tbc_course_24.utils
+package com.example.tbc_course_24.common
 
-class Resource<out T>(val status: Status, val data: T?, val message: String?) {
+
+data class Resource<out T>(
+    val status: Status = Status.LOADING,
+    val data: Any? = null,
+    val message: String? = ""
+    )
+{
 
 
     enum class Status {

@@ -1,4 +1,4 @@
-package com.example.tbc_course_24.network
+package com.example.tbc_course_24.data.services
 
 import com.example.tbc_course_24.domain.model.CoursesModel
 import retrofit2.Response

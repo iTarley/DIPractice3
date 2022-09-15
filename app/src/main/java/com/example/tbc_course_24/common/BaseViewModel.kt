@@ -1,0 +1,49 @@
+package com.example.tbc_course_24.common
+
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+
+abstract class BaseViewModel<T>():ViewModel() {
+
+    private val _flow = MutableStateFlow<Resource<T>>(Resource())
+    val flow = _flow.asStateFlow()
+
+    fun <T>responseHandler(flow: Flow<Resource<T>>){
+        viewModelScope.launch {
+            flow.collect(){
+                when(it.status){
+                    Resource.Status.SUCCESS -> {
+                        Log.d("testS", "${it.data}")
+                        _flow.value = _flow.value.copy(
+                            status = Resource.Status.SUCCESS, data = it.data)
+                    }
+                    Resource.Status.ERROR -> {
+                        Log.d("testE", "${it.message}")
+                        _flow.value = _flow.value.copy(
+                            status = Resource.Status.ERROR,
+                            message = it.message)
+                    }
+                    Resource.Status.LOADING -> {
+                        Log.d("testL", "${it.status}")
+                        _flow.value = _flow.value.copy(
+                            status = Resource.Status.LOADING)
+                    }
+                }
+            }
+        }
+    }
+    fun resetState() {
+        _flow.value = _flow.value.copy(
+            status = Resource.Status.LOADING,
+            data = null,
+            message = "",
+        )
+    }
+}
