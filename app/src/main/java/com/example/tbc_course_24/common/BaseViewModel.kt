@@ -12,29 +12,32 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<T>():ViewModel() {
 
-    private val _flow = MutableStateFlow<Resource<T>>(Resource())
+    protected val _flow = MutableStateFlow<Resource<T>>(Resource())
     val flow = _flow.asStateFlow()
 
-    fun <T>responseHandler(flow: Flow<Resource<T>>){
-        viewModelScope.launch {
-            flow.collect(){
-                when(it.status){
-                    Resource.Status.SUCCESS -> {
-                        Log.d("testS", "${it.data}")
-                        _flow.value = _flow.value.copy(
-                            status = Resource.Status.SUCCESS, data = it.data)
-                    }
-                    Resource.Status.ERROR -> {
-                        Log.d("testE", "${it.message}")
-                        _flow.value = _flow.value.copy(
-                            status = Resource.Status.ERROR,
-                            message = it.message)
-                    }
-                    Resource.Status.LOADING -> {
-                        Log.d("testL", "${it.status}")
-                        _flow.value = _flow.value.copy(
-                            status = Resource.Status.LOADING)
-                    }
+    protected suspend fun responseHandler(
+        flow: Flow<Resource<T>>,
+        successCallback: ((Resource<T>) -> (Unit))?
+    ){
+        flow.collect(){
+            when(it.status){
+                Resource.Status.SUCCESS -> {
+                    Log.d("testS", "${it.data}")
+                    _flow.value = _flow.value.copy(
+                        status = Resource.Status.SUCCESS, data = it.data)
+                    successCallback?.invoke(it)
+                }
+                Resource.Status.ERROR -> {
+                    Log.d("testE", "${it.message}")
+                    _flow.value = _flow.value.copy(
+                        status = Resource.Status.ERROR,
+                        message = it.message)
+
+                }
+                Resource.Status.LOADING -> {
+                    Log.d("testL", "${it.status}")
+                    _flow.value = _flow.value.copy(
+                        status = Resource.Status.LOADING)
                 }
             }
         }

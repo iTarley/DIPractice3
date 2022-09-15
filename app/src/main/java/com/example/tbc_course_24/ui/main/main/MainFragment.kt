@@ -5,6 +5,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.tbc_course_24.common.Resource
 import com.example.tbc_course_24.databinding.FragmentMainBinding
 import com.example.tbc_course_24.ui.main.adapter.ActiveRecycler
 import com.example.tbc_course_24.ui.main.adapter.NewRecycler
@@ -31,15 +32,13 @@ class MainFragment : BaseFragment<FragmentMainBinding>(FragmentMainBinding::infl
 
     override fun start() {
 
+        viewModel.getCourses()
 
         viewLifecycleOwner.lifecycleScope.launch{
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
-                viewModel.getResponse()
-                viewModel.flow.collect{
-                    if (it.data != null){
-                        val x = it.data
-                        adapterActive.submitList(it)
-                    }
+                viewModel.course.collect{
+                    adapterActive.submitList(it.activeCourses)
+                    adapterNew.submitList(it.newCourses)
                 }
 
             }

@@ -3,7 +3,7 @@ package com.example.tbc_course_24.common
 
 data class Resource<out T>(
     val status: Status = Status.LOADING,
-    val data: Any? = null,
+    val data: T? = null,
     val message: String? = ""
     )
 {
